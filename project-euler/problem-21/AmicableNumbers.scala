@@ -33,15 +33,16 @@ object Solution {
       x.sum - y
     }
 
+    val amicableNumbers = for {
+      j <- 2 until upperBound / 2
+      if sumOfProperDivisorMap(j) != j && sumOfProperDivisorMap(j) < upperBound &&
+        sumOfProperDivisorMap(sumOfProperDivisorMap(j)) == j
+    } yield j
+
     val t = readLine.toInt
     for (i <- 1 to t) {
       val n = readLine.toInt
-      val pairs = for {
-        j <- 2 until n
-        if sumOfProperDivisorMap(j) != j && sumOfProperDivisorMap(j) < upperBound &&
-          sumOfProperDivisorMap(sumOfProperDivisorMap(j)) == j
-      } yield j
-      println(pairs.sum)
+      println(amicableNumbers.takeWhile(_ < n).sum)
     }
   }
 }
