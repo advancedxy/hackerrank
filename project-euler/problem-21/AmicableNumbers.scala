@@ -1,4 +1,5 @@
 object Solution {
+  import java.util.Arrays.binarySearch
 
   def sievePrimeGenerator(n: Int): (List[Int], Array[Boolean]) = {
     val nums = Array.fill(n + 1)(true)
@@ -39,6 +40,14 @@ object Solution {
     }
     result
   }
+  
+  def sumOfTotalDivisors(primeMap: Map[Int, Int]): Int = {
+    primeMap.foldLeft(1) { (result, pa) =>
+      val (p, a) = pa
+      if (a == 1)  (p + 1) * result
+      else (math.pow(p, a + 1) - 1) / (p - 1) * result toInt
+    }
+  }
 
   def main(args: Array[String]) {
     val upperBound = 1e5.toInt
@@ -49,19 +58,27 @@ object Solution {
 
     val primeFactorMapArray  = primeFactorMap(upperBound)
     val sumOfProperDivisorMap = primeFactorMapArray.zipWithIndex map {
-      case (x, y) =>
-        (x.foldLeft(1.0) { (product, pf) => product * (math.pow(pf._1, pf._2 + 1) - 1) / (pf._1 - 1) }).toInt - y
+      case (x, y) => sumOfTotalDivisors(x) - y
     }
-    val amicableNumbers = for {
-      j <- 2 until upperBound
-      if sumOfProperDivisorMap(j) != j && sumOfProperDivisorMap(j) < upperBound &&
-        sumOfProperDivisorMap(sumOfProperDivisorMap(j)) == j
-    } yield j
 
+    val amicableNumbers = (for {
+      j <- 2 until upperBound
+      if sumOfProperDivisorMap(j) != j && sumOfProperDivisorMap(j) <= upperBound &&
+        sumOfProperDivisorMap(sumOfProperDivisorMap(j)) == j
+    } yield j).toArray
+    
+    // todo: consider the possibility that the larger amicable number of a pair
+    // is beyond the upperBound.
+    // val possibleAmicableNumbers = (2 to
+    // upperBound).toArray.filter(sumOfProperDivisorMap(_) > upperBound)
+    
     val t = readLine.toInt
     for (i <- 1 to t) {
       val n = readLine.toInt
-      println(amicableNumbers.takeWhile(_ < n).sum)
+      val searchedIndex = binarySearch(amicableNumbers, n)
+      val slicePoint = 
+        if (searchedIndex >= 0) searchedIndex + 1 else -searchedIndex - 1
+      println(amicableNumbers.slice(0, slicePoint).sum)
     }
   }
 }
