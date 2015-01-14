@@ -21,20 +21,18 @@ object Solution {
       numberOfCycleDigits(1, x)))
     var longest = 0
     var index = 1
-    val indexArray = (for ((d, count) <- numberCycleCountMap) yield {
+    val indexArray = Array.fill(upperBound + 1)(0)
+    for ((d, count) <- numberCycleCountMap) {
+      indexArray(d) = index
       if (count > longest) {
         longest = count
         index = d
-        index
       }
-      else {
-        index
-      }
-    }).toArray
+    }
     val t = readLine.toInt
     for (i <- 1 to t) {
       var n = readLine.toInt
-      println(indexArray(n-2))
+      println(indexArray(n))
     }
   }
 }
