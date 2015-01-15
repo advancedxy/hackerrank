@@ -1,16 +1,10 @@
 object Solution {
   val moduloP = 1e9.toInt + 7
 
-  def diagonalSum(x: Long): Long = {
+  def diagonalSum(x: Long): Int = {
     val m = x / 2
-    val multiples = m % 3 match {
-      case 0 => List(m / 3, m + 1, x)
-      case 1 => List(m, m + 1, x / 3)
-      case 2 => List(m, (m + 1) / 3, x)
-    }
-    (1 + (multiples.foldLeft(8l) { case (x, y) =>
-      (x * (y % moduloP)) % moduloP
-    }) + 2 * (m % moduloP) * (m % moduloP) + 6 * (m % moduloP)) % moduloP
+    ((1 + BigInt(m) * BigInt(m + 1) * BigInt(x) * 8 / 3 + 2 * BigInt(m).pow(2) +
+    6 * m) % moduloP).toInt
   }
 
   def main(args: Array[String]) {
