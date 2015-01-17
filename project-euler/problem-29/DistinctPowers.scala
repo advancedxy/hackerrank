@@ -17,11 +17,17 @@ object Solution {
     }).reverse.drop(1).toVector
     val visted = scala.collection.mutable.Set.empty[Int]
     for (i <- 2 to sqrta if !visted(i)) {
-      val logia = (math.log(a) / math.log(i)).toInt
+      val logia = intLog(a, i)
       total -= duplicatesSum(logia - 2)
       visted ++= (2 to logia).map(math.pow(i, _).toInt)
     }
     total
+  }
+
+  def intLog(n: Int, base: Int): Int = {
+    var start = 0
+    while(math.pow(base, start) <= n) start += 1
+    start - 1
   }
 
   def main(args: Array[String]) {
