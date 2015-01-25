@@ -1,76 +1,72 @@
 object Solution {
   import scala.annotation.tailrec
 
-  def combinationWithRepetitions[T](ls: List[T], n: Int): Iterator[List[T]] = {
-    val lset = ls.distinct
-    if (n == 0) Iterator(List())
-    else {
-      for {
-        x <- lset.toIterator
-        xs <- combinationWithRepetitions(ls, n - 1)
-      } yield x :: xs
+  def combinations[T](ls: List[T], k: Int): Stream[List[T]] = {
+    if (k > ls.size) Stream()
+    else ls match {
+      case _ :: _ if k == 1 => ls.map(List(_)).toStream
+      case hd :: tl =>
+        combinations(tl, k - 1).map(hd :: _) #::: combinations(tl, k)
+      case _ => Stream()
     }
   }
 
-  def combinationWithRepetitionsTail[T](ls: List[T],
-                                        n: Int): Stream[List[T]] = {
-    val lset = ls.distinct.toStream
-
-    @tailrec
-    def combinationAux(acc: Stream[List[T]], n: Int): Stream[List[T]]= {
-      if (n == 0) acc
-      else {
-        val newAcc = lset.map(x => acc.map(x :: _)).flatten
-        combinationAux(newAcc, n - 1)
-      }
-    }
-
-    combinationAux(Stream(List()), n)
-  }
-  val numberDigits = (0 to 1e5.toInt).map(x => x.toString.map(_.asDigit).toList)
+  val numberDigits = (0 to 1e4.toInt).map(x => x.toString.map(_.asDigit).toList)
   val digitNumbers = numberDigits.zipWithIndex.toMap
-  def genCombin(n: Int, d: Int, digits: List[Int]): List[(Int, Int)] = {
-    val nDigits = numberDigits(n)
-    val dDigits = numberDigits(d)
 
-    def combineHelper[T](as: List[T],
-                         bs: List[T],
-                         acc: List[List[T]]): List[List[T]] = (as, bs) match {
-      case (Nil, Nil) => acc
-      case (head :: tail, Nil) => combineHelper(tail, Nil, acc.map(head :: _))
-      case (Nil, head :: tail) => combineHelper(Nil, tail, acc.map(head :: _))
-      case (ah :: at, bh :: bt) =>
-        val newAcc = acc.map(ah :: bh :: _) ++ acc.map(bh :: ah :: _)
-        combineHelper(at, bs, acc.map(ah :: _)) ++
-        combineHelper(as, bt, acc.map(bh :: _))
+  def sievePrimeGenerator(n: Int): (List[Int], Array[Boolean]) = {
+    val nums = Array.fill(n + 1)(true)
+    nums(0) = false; nums(1) = false
+    val primes = for (i <- (2 to n).toList if nums(i)) yield {
+      var j = 2
+      while (i * j <= n) {
+        nums(i * j) = false
+        j += 1
+      }
+      i
     }
+    (primes, nums)
+  }
 
-    val nNums = combineHelper(nDigits, digits, List(List()))
-                .map(x => if (x.length == 1) digitNumbers(x) else digitNumbers(x.dropWhile(_ == 0)))
-    val dNums = combineHelper(dDigits, digits, List(List()))
-                .map(x => if (x.length == 1) digitNumbers(x) else digitNumbers(x.dropWhile(_ == 0)))
-    for {
-      n <- nNums
-      d <- dNums
-    } yield (n, d)
+  
+  def gcd(a: Int, b: Int): Int = if (b == 0) a else gcd(b, a % b)
+
+  def genRN(denominator: Int, rd: Int, start: Int): Seq[(Int, Int)] = {
+    val sep = rd / gcd(denominator, rd)
+    val diff = numberDigits(denominator).diff(numberDigits(rd)).sorted
+    val nk = numberDigits(denominator).size - diff.size
+    if (diff.contains(0)) Seq.empty[(Int, Int)]
+    else {
+      val rnStart = if (start % sep == 0) start / sep else start / sep + 1
+      (rnStart * sep until rd by sep).map({ rn =>
+        (rn, denominator * rn / rd)}).filter {
+          case (rn, numerator) => 
+            numberDigits(numerator).diff(numberDigits(rn)).sorted == diff &&
+            combinations(numberDigits(numerator), nk).contains(numberDigits(rn))
+        }
+    }
+  }
+
+  @tailrec
+  def digitsToNumbers(ls: List[Int]): Int = ls match {
+    case Nil => 0
+    case 0 :: tail => digitsToNumbers(tail)
+    case _ => digitNumbers(ls)
   }
 
   def genFractions(n: Int, k: Int): Seq[(Int, Int)] = {
-    val m = n - k // the number of digits after cancelling
-    val start = math.pow(10, m - 1).toInt
+    val start = math.pow(10, n - 1).toInt
     val end = start * 10
-    val fractions = for {
-      denominator <- start + 1 until end
-      numerator <- start until denominator
-      cancelledDigits <- combinationWithRepetitionsTail((1 to 9).toList, k)
-      (realN, realD) <- genCombin(numerator, denominator,
-        cancelledDigits)
-      if numberDigits(realN).size == n && numberDigits(realD).size == n &&
-        denominator * realN == numerator * realD
-      } yield {
-      (realN, realD)
-    }
-    fractions
+    val rnStart = math.pow(10, n - k - 1).toInt
+    val (_, primeTable) = sievePrimeGenerator(end)
+    (for {
+      denominator <- start + 1 until end if !primeTable(denominator)
+      rd <- combinations(numberDigits(denominator), n - k) 
+      if digitsToNumbers(rd) >= 0
+      (rn, numerator) <- genRN(denominator, digitsToNumbers(rd), rnStart)
+    } yield {
+      (numerator, denominator)
+    }).distinct
   }
 
   def main(args: Array[String]) {
