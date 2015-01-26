@@ -4,11 +4,13 @@ object Solution {
     val upperBound = 1e5.toInt
     val limit = if (k == 8) upperBound / 2 else upperBound
 
+    val digitAppeared = Array.fill(9 + 1)(false)
+    // set 0 to has be appeared. If we see 0 again, we can just return false
+    digitAppeared(0) = true
+    if (k == 8) digitAppeared(9) = true
+
     def canBePandigitalMultiples(m: Int): Boolean = {
-      val digitAppeared = Array.fill(9 + 1)(false)
-      // set 0 to has be appeared. If we see 0 again, we can just return false
-      digitAppeared(0) = true 
-      if (k == 8) digitAppeared(9) = true
+      for (i <- 1 to k) digitAppeared(i) = false
       var count = 0 // the number of digits has be appeared.
       var mb = 1
       while (count < k) {
