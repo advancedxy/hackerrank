@@ -36,6 +36,10 @@ object Solution {
       if (primes.size > 0 && primes(0) <= n)
         prime = primes.search(n) match {
           case Found(idx) => n
+          // note: There is a bug in scala 2.11.0 which hackerrank runs.
+          // see https://issues.scala-lang.org/browse/SI-7372 for more details,
+          // if you want to run this code on hackerrank, change idx - 1 => idx
+          // if hackerrank haven't update their scala runtime.
           case InsertionPoint(idx) => primes(idx - 1)
         }
       else {
