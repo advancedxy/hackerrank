@@ -1,16 +1,33 @@
 object Solution {
 
+  val powerOf10 = ((1 to 18).foldLeft(List(1l)) { (x, y) =>
+     10 * x.head :: x
+  }).reverse.toVector
   val headTailTable = ((1 to 18).foldLeft(List((0l, 0l))) { (x, y) =>
     val start = x.head._2 + 1
-    val numbers = math.pow(10, y).toLong - math.pow(10, y - 1).toLong
+    val numbers = powerOf10(y) - powerOf10(y - 1)
     val end = start + y * numbers - 1
     (start, if (end > 0) end else Long.MaxValue) :: x
   }).reverse.toVector
 
+  def binarySearchIndex(htTable: IndexedSeq[(Long, Long)], idx: Long): Int = {
+    var s = 0
+    var e = htTable.size
+    var m = (e - s) / 2 + s
+    while (m >= s) {
+      val (start, end) = htTable(m)
+      if (idx >= start && idx <= end) return m
+      else if (idx < start) e = m
+      else s = m + 1
+      m = (e - s) / 2 + s
+    }
+    -1
+  }
+
   def digitOfIndex(idx: Long): Int = {
-    val n = headTailTable.indexWhere(x => idx >= x._1 && idx <= x._2)
+    val n = binarySearchIndex(headTailTable, idx)
     val (start, end)= headTailTable(n)
-    val numberStart = math.pow(10, n - 1).toLong - 1
+    val numberStart = powerOf10(n - 1) - 1
     val number = idx - start + 1
     val (d, p) = (number / n + numberStart, number % n)
     if (p == 0) (d % 10).toInt
