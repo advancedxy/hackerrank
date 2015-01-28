@@ -31,18 +31,25 @@ object Solution {
   
   def gcd(a: Int, b: Int): Int = if (b == 0) a else gcd(b, a % b)
 
-  def genRN(denominator: Int, rd: Int, start: Int): Seq[(Int, Int)] = {
+  def prepadTo(ls: List[Int], k: Int, n: Int): List[Int] = {
+    if (ls.size < k) List.fill(k - ls.size)(n) ::: ls
+    else ls
+  }
+
+  def genRN(denominator: Int, rd: Int, n: Int, k: Int): Seq[(Int, Int)] = {
     val sep = rd / gcd(denominator, rd)
-    val diff = numberDigits(denominator).diff(numberDigits(rd)).sorted
-    val nk = numberDigits(denominator).size - diff.size
+    val nk = n - k
+    val rdList = prepadTo(numberDigits(rd), nk, 0)
+    val diff = numberDigits(denominator).diff(rdList).sorted
     if (diff.contains(0)) Seq.empty[(Int, Int)]
     else {
-      val rnStart = if (start % sep == 0) start / sep else start / sep + 1
-      (rnStart * sep until rd by sep).map({ rn =>
+      //val rnStart = if (start % sep == 0) start / sep else start / sep + 1
+      (sep until rd by sep).map({ rn =>
         (rn, denominator * rn / rd)}).filter {
-          case (rn, numerator) => 
-            numberDigits(numerator).diff(numberDigits(rn)).sorted == diff &&
-            combinations(numberDigits(numerator), nk).contains(numberDigits(rn))
+          case (rn, numerator) =>
+            val rnList = prepadTo(numberDigits(rn), nk, 0)
+            numberDigits(numerator).diff(rnList).sorted == diff &&
+            combinations(numberDigits(numerator), nk).contains(rnList)
         }
     }
   }
@@ -62,8 +69,8 @@ object Solution {
     (for {
       denominator <- start + 1 until end if !primeTable(denominator)
       rd <- combinations(numberDigits(denominator), n - k) 
-      if digitsToNumbers(rd) >= 0
-      (rn, numerator) <- genRN(denominator, digitsToNumbers(rd), rnStart)
+      if digitsToNumbers(rd) >= 1
+      (rn, numerator) <- genRN(denominator, digitsToNumbers(rd), n, k)
     } yield {
       (numerator, denominator)
     }).distinct
