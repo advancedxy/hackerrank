@@ -1,5 +1,8 @@
 object Solution {
 
+  // this code won't work for large p. if p ~ Long.MaxValue and a ~ p, b ~ p,
+  // the ma * limit % p * num % p ~ ma * mb % p where ma * mb will overflow.
+  // ~ means left is close to but than than right
   def modMulLong(a: Long, b: Long, p: Long): Long = {
     if (a == 0 || b == 0) return 0
     val ma = a % p
