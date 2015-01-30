@@ -1,5 +1,17 @@
 object Solution {
 
+  def modMulLong(a: Long, b: Long, p: Long): Long = {
+    if (a == 0 || b == 0) return 0
+    val ma = a % p
+    val mb = b % p
+    val limit = Long.MaxValue / ma
+    if (limit > mb) ma * mb % p
+    else {
+      val (num, rem) = (mb / limit, mb % limit)
+      (ma * limit % p * num % p + ma * rem % p) % p
+    }
+  }
+
   def lastTenDigits(n: Int): Long = {
     val moduloP = 1e10.toLong
     var result = 1L
@@ -8,22 +20,9 @@ object Solution {
     while (exp > 0) {
       if (base == 0) return 0
       else {
-        val nLimit = Long.MaxValue / base
-        if ((exp & 1) == 1) {
-          if (nLimit > result) result = (result * base) % moduloP
-          else {
-            val num = result / nLimit
-            val remain = result - nLimit * num
-            result = ((base * nLimit) % moduloP * num + (base * remain) % moduloP) % moduloP
-          }
-        }
+        if ((exp & 1) == 1) result = modMulLong(base, result, moduloP)
         exp >>= 1
-        if (nLimit > base) base = (base * base) % moduloP
-        else {
-          val num = base /nLimit
-          val remain = base - nLimit * num
-          base = ((base * nLimit) % moduloP * num + (base * remain) % moduloP) % moduloP
-        }
+        base = modMulLong(base, base, moduloP)
       }
     }
     result
