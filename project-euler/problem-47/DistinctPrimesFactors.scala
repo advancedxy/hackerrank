@@ -19,22 +19,36 @@ object Solution {
     val result = Array.fill(n + 1)(1)
     val (primes, primeTable) = sievePrimeGenerator(n)
     for (i <- 2 to n if !primeTable(i)) {
-      val index = primes.indexWhere(i % _ == 0)
-      val p = if (index < 0) 1 else primes(index) // p will never be 1
+      val p = primes.find(i % _ == 0).getOrElse(1)
       val pp = i / p
       result(i) = if (pp % p == 0) result(i / p) else result(i / p) + 1
     }
     result
   }
-  
+
   def main(args: Array[String]) {
     val Array(n, k) = readLine.split(" ").map(_.toInt)
     val numOfPrimeFactors = genPrimeFactorNum(n + k)
     val nums = (6 until n + k).filter { x =>
       numOfPrimeFactors(x) == k
     }
-    for (ns <- nums.sliding(k)) {
-      if (ns.zip(ns.slice(1, ns.size)).forall(x => x._2 - x._1 == 1)) println(ns(0))
+    var i = 1
+    var cnt = 1
+    while(i < nums.size) {
+      if (nums(i) - nums(i - 1) == 1) {
+        cnt += 1
+        if (i == nums.size - 1) { // last element should print nums
+          for (j <- 0 to cnt - k) {
+            println(nums(j - cnt + i + 1))
+          }
+        }
+      } else {
+        for (j <- 0 to cnt - k) {
+          println(nums(j - cnt + i))
+        }
+        cnt = 1
+      }
+      i += 1
     }
   }
 }
