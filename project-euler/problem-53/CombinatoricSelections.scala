@@ -11,8 +11,9 @@ object Solution {
       else c = c / (r + 1) * (n - r)
       r += 1
     }
-    // c will close to be
-    if (c <= k) r += 1
+    // after the while loop c is less or equal to k, which has no overflow. And
+    // as we ask for number greater than k, so, r should be increased by 1
+    r += 1
     if (r > n / 2) 0 else n - 2 * r + 1
   }
 
