@@ -5,6 +5,8 @@ object Solution {
     val cache = mutable.Map.empty[BigInt, BigInt]
     
     def recursiveCalculateConverge(x: BigInt, c: Int): BigInt = {
+      require(x >= 0)
+      if (x < 10) return x
       if (cache.contains(x)) cache(x)
       else {
         if (c >= 60) {
@@ -13,7 +15,7 @@ object Solution {
         }
         else {
           val xs = x.toString
-          val rxs = xs.reverse
+          val rxs = xs.reverse.dropWhile(_ == '0')
           if (xs == rxs) {
             cache(x) = x
             x
