@@ -15,7 +15,7 @@ object Solution {
         }
         else {
           val xs = x.toString
-          val rxs = xs.reverse.dropWhile(_ == '0')
+          val rxs = xs.reverse
           if (xs == rxs) {
             cache(x) = x
             x
@@ -24,7 +24,9 @@ object Solution {
             val rx = BigInt(rxs)
             val convergeNum = recursiveCalculateConverge(x + rx, c + 1)
             cache(x) = convergeNum
-            if (xs.size == rxs.size) cache(rx) = convergeNum
+            // The leading zero check would be sufficient to guarantee x and rx
+            // converge to same number
+            if (rxs(0) != '0') cache(rx) = convergeNum
             convergeNum
           }
         }
