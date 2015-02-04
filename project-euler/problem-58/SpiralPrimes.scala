@@ -20,64 +20,45 @@ object Solution {
               primeTable: Array[Boolean]): Boolean = {
     val size = primeTable.size - 1
     val sizeSquare = 1L * size * size
+    require(sizeSquare >= x)
     val pSize = primes.size
     if (x < 0) false
-    else if (x < size) primeTable(x.toInt)
-    else if (x < sizeSquare) {
-      var j = 0
-      while (j < pSize) {
-        if (x % primes(j) == 0) return false
-        j += 1
-      }
-      true
-    }
+    else if (x <= size) primeTable(x.toInt)
     else {
       var j = 0
-      while (j < pSize) {
+      val sqrtX = math.sqrt(x).toLong
+      while (j < pSize && primes(j) <= sqrtX) {
         if (x % primes(j) == 0) return false
         j += 1
-      }
-      var start = (sizeSquare - 5) / 6 * 6 + 5
-      while (start <= x / start) {
-        if (x % start == 0 || x % (start + 2) == 0) return false
-        start += 6
       }
       true
     }
   }
-    
-  def isPrime(n: Long): Boolean = {
-    if (n <= 1) return false
-    if (n == 2 || n == 3) return true
-    if (n % 2 == 0 || n % 3 == 0) return false
 
-    var counter = 5
-    while (counter <= n / counter) {
-      if (n % counter == 0) return false
-      if (n % (counter + 2) == 0) return false
-      counter += 6
-    }
-
-    true
-  }
-
-  def main(args: Array[String]) {
-    val n = readLine.toInt
-    val ratio = 1.0 * n / 100
+  def getIUnderRatio(ratio: Double): Long = {
     var sl = 2L
     var primeCount = 3L
     var p = 9L
-    val (primes, primeTable) = sievePrimeGenerator(1e6.toInt)
-    while (1.0 * primeCount / (2 * sl + 1) >= ratio) {
+    // 24e4 is a magical number, as I pre-compute the answer.
+    val (primes, primeTable) = sievePrimeGenerator(24e4.toInt)
+    while (primeCount  >= ratio * (2 * sl + 1)) {
       sl += 2
       var i = 1
-      while (i <= 3){
+      while (i <= 3) {
         p += sl
+        println(p)
         if (isPrime(p, primes, primeTable)) primeCount += 1
         i += 1
       }
       p += sl
     }
-    println(sl + 1)
+    sl + 1
+  }
+
+  def main(args: Array[String]) {
+    val n = readLine.toInt
+    val ratio = 1.0 * n / 100
+    val i = getIUnderRatio(ratio)
+    println(i)
   }
 }
