@@ -20,47 +20,64 @@ object Solution {
               primeTable: Array[Boolean]): Boolean = {
     val size = primeTable.size - 1
     val sizeSquare = 1L * size * size
-    x match {
-      case p if p < 0 => false
-      case p if p <= size => primeTable(p.toInt)
-      case p if p <= sizeSquare =>
-        for (prime <- primes) {
-          if (p % prime == 0) return false
-        }
-        true
-      case p =>
-        for (prime <- primes) {
-          if (p % prime == 0) return false
-        }
-        var start = (sizeSquare - 5) / 6 * 6 + 5
-        while (start * start <= p) {
-          if (p % start == 0 || p % (start + 2) == 0) return false
-          start += 6
-        }
-        true
+    val pSize = primes.size
+    if (x < 0) false
+    else if (x < size) primeTable(x.toInt)
+    else if (x < sizeSquare) {
+      var j = 0
+      while (j < pSize) {
+        if (x % primes(j) == 0) return false
+        j += 1
+      }
+      true
+    }
+    else {
+      var j = 0
+      while (j < pSize) {
+        if (x % primes(j) == 0) return false
+        j += 1
+      }
+      var start = (sizeSquare - 5) / 6 * 6 + 5
+      while (start <= x / start) {
+        if (x % start == 0 || x % (start + 2) == 0) return false
+        start += 6
+      }
+      true
     }
   }
     
+  def isPrime(n: Long): Boolean = {
+    if (n <= 1) return false
+    if (n == 2 || n == 3) return true
+    if (n % 2 == 0 || n % 3 == 0) return false
+
+    var counter = 5
+    while (counter <= n / counter) {
+      if (n % counter == 0) return false
+      if (n % (counter + 2) == 0) return false
+      counter += 6
+    }
+
+    true
+  }
+
   def main(args: Array[String]) {
     val n = readLine.toInt
     val ratio = 1.0 * n / 100
-    var i = 3L
+    var sl = 2L
     var primeCount = 3L
-    var totalCount = 5L
-    val (primes, primeTable) = sievePrimeGenerator(1e7.toInt)
-    while (1.0 * primeCount / totalCount >= ratio) {
-      val iSquare = i * i
-      i += 2
-      var newPrimeCount = 0
-      var j = 1
-      while (j <= 3) {
-        if (isPrime(iSquare + (i - 1) * j, primes, primeTable)) 
-          newPrimeCount += 1
-        j += 1
+    var p = 9L
+    val (primes, primeTable) = sievePrimeGenerator(1e6.toInt)
+    while (1.0 * primeCount / (2 * sl + 1) >= ratio) {
+      sl += 2
+      var i = 1
+      while (i <= 3){
+        p += sl
+        if (isPrime(p, primes, primeTable)) primeCount += 1
+        i += 1
       }
-      primeCount += newPrimeCount
-      totalCount += 4
+      p += sl
     }
-    println(i)
+    println(sl + 1)
   }
 }
