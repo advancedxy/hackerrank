@@ -1,7 +1,7 @@
 object Solution {
   import scala.collection.mutable
 
-  // the largestgem 
+  // the largestPem is easier to generate than leastPem. It's straightforward.
   def largestPem(x: Long): Long = {
     var digits = Array.fill(10)(0)
     var temp = x
