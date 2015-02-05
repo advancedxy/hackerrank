@@ -1,4 +1,5 @@
 object Solution {
+  import java.util.Arrays.binarySearch
 
   case class Memo[A, B](f: A => B) extends (A => B) {
     private val cache = scala.collection.mutable.Map.empty[A, B]
@@ -21,22 +22,15 @@ object Solution {
   }
 
   def concatInts(a: Int, b: Int) =
-    if (b == 0) a * 10
-    else {
-      var temp = b
-      var result = a
-      while (temp > 0) {
-        result *= 10
-        temp /= 10
-      }
-      result + b
-    }
+    a * math.pow(10, math.log10(b).toInt + 1).toInt + b
 
   def genKPrimeSet(n: Int, k: Int) = {
-    val (primes, primeTable) = sievePrimeGenerator(n)
+    val primeLimit = math.pow(10, math.log10(n).toInt + 1).toInt
+    val (primes, primeTable) = sievePrimeGenerator(primeLimit)
+    val primeLessThanN = primes.filter(_ < n)
 
     def isPrime(x: Int): Boolean = {
-      if (x <= n) primeTable(x)
+      if (x < primeLimit) primeTable(x)
       else {
         var j = 0
         while (j < primes.size && primes(j) * primes(j) <= x) {
@@ -49,39 +43,34 @@ object Solution {
     
     lazy val isPrimePair: Memo[(Int, Int), Boolean] = Memo {
       case (x, y) if x == y => false
-      case (x, y) if x > y => isPrimePair(y, x)
+      case (x, y) if x < y => isPrimePair(y, x)
       case (x, y) =>
         isPrime(concatInts(x, y)) && isPrime(concatInts(y, x))
     }
-
-    def isCoPrimePair(ls: Seq[Int]): Boolean = {
-      ls.combinations(2).forall(x => isPrimePair(x(0), x(1)))
+    
+    lazy val getConcatableSet: Memo[Int, Set[Int]] = Memo {
+     case x =>
+       val searchPoint = binarySearch(primeLessThanN, x)
+       val index = if (searchPoint < 0) -searchPoint - 1 else searchPoint
+       primeLessThanN.slice(index, primeLessThanN.size)
+             .filter(p => p > x && isPrimePair(p, x))
+             .toSet
     }
     
-    import scala.collection.mutable.{HashMap, ListBuffer}
-    val pairSet = new HashMap[Int, ListBuffer[Int]] {
-      override def default(k: Int) = ListBuffer.empty[Int]
-    }
-    
-    for {
-      i <- 0 until primes.size
-      j <- i + 1 until primes.size
-    } {
-      if (isPrimePair(primes(i), primes(j)))
-        pairSet(primes(i)) = pairSet(primes(i)) += primes(j)
-    }
-
-    // Ok, we get here, we can filter through the pairs
-    pairSet.filter(_._2.size > k - 1).flatMap( {
-      case (key, v) => v.combinations(k - 1)
-                        .filter(isCoPrimePair(_)).map(key +: _)
-    }
-    )
+    def combine(n: Int, ls: Set[Int]): Set[Set[Int]] =
+      if (n == 1) ls.map(Set(_))
+      else for {
+        p <- ls
+        filtered = getConcatableSet(p)
+        lss <- combine(n - 1, ls & filtered)
+      } yield lss + p
+      
+    combine(k, primeLessThanN.toSet)
   }
 
   def main(args: Array[String]) {
     val Array(n, k) = readLine.split(" ").map(_.toInt)
-    val kPrimes = genKPrimeSet(n - 1, k)
+    val kPrimes = genKPrimeSet(n, k)
     for (sum <- kPrimes.map(_.sum).toList.sorted) {
       println(sum)
     }
