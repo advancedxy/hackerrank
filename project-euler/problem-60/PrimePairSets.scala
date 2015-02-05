@@ -40,14 +40,15 @@ object Solution {
         true
       }
     }
-    
-    lazy val isPrimePair: Memo[(Int, Int), Boolean] = Memo {
-      case (x, y) if x == y => false
-      case (x, y) if x < y => isPrimePair(y, x)
-      case (x, y) =>
+
+    def isPrimePair(x: Int, y: Int): Boolean = {
+      if (x == y) false
+      else if (x < y) isPrimePair(y, x)
+      else {
         isPrime(concatInts(x, y)) && isPrime(concatInts(y, x))
+      }
     }
-    
+
     lazy val getConcatableSet: Memo[Int, Set[Int]] = Memo {
      case x =>
        val searchPoint = binarySearch(primeLessThanN, x)
@@ -56,7 +57,7 @@ object Solution {
              .filter(p => p > x && isPrimePair(p, x))
              .toSet
     }
-    
+
     def combine(n: Int, ls: Set[Int]): Set[Set[Int]] =
       if (n == 1) ls.map(Set(_))
       else for {
@@ -64,14 +65,14 @@ object Solution {
         filtered = getConcatableSet(p)
         lss <- combine(n - 1, ls & filtered)
       } yield lss + p
-      
+
     combine(k, primeLessThanN.toSet)
   }
 
   def main(args: Array[String]) {
     val Array(n, k) = readLine.split(" ").map(_.toInt)
     val kPrimes = genKPrimeSet(n, k)
-    for (sum <- kPrimes.map(_.sum).toList.sorted) {
+    for (sum <- kPrimes.toList.map(_.sum).sorted) {
       println(sum)
     }
   }
