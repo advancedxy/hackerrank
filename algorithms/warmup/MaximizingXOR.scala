@@ -13,6 +13,16 @@ object Solution {
     result
   }
 
+  def maxXorS(l: Int, r: Int): Int = {
+    var p = l ^ r
+    var result = 1
+    while (p >= 1) {
+      p >>= 1
+      result <<= 1
+    }
+    result - 1
+  }
+
   def main(args: Array[String]) {
     var _l:Int = Console.readInt
     var _r:Int = Console.readInt
