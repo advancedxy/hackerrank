@@ -5,7 +5,7 @@ object Solution {
     val max = a max b
     val diff = max - min
     if (diff != 0) min * (n - 1) to max * (n - 1) by diff
-    else IndexedSeq(max)
+    else IndexedSeq(max * (n - 1))
   }
 
   def main(args: Array[String]) {
