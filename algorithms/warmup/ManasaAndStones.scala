@@ -4,7 +4,8 @@ object Solution {
     val min = a min b
     val max = a max b
     val diff = max - min
-    min * (n - 1) to max * (n - 1) by diff
+    if (diff != 0) min * (n - 1) to max * (n - 1) by diff
+    else IndexedSeq(max)
   }
 
   def main(args: Array[String]) {
