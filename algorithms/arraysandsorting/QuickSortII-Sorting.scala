@@ -1,5 +1,21 @@
 object Solution {
 
+  def quickSort(nums: Array[Int]) {
+
+    def partition(nums: Array[Int]): Array[Int] = {
+      if (nums.size <= 1) return nums
+      val p = nums(0)
+      val lessThan = nums.filter(_ < p)
+      val equalTo = nums.filter(_ == p)
+      val greaterThan = nums.filter(_ > p)
+      val sortedArray = partition(lessThan) ++ equalTo ++ partition(greaterThan)
+      println(sortedArray.mkString(" "))
+      sortedArray
+    }
+
+    partition(nums)
+  }
+
   def quickSort3Way(nums: Array[Int]) {
 
     def exch(i: Int, j: Int) {
@@ -35,6 +51,6 @@ object Solution {
   def main(args: Array[String]) {
     val _ = readLine
     val nums = readLine.split(" ").map(_.toInt)
-    quickSortWays(nums)
+    quickSort(nums)
   }
 }
