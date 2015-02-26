@@ -16,7 +16,7 @@ object Solution {
       while(i < hi) {
         if (nums(i) < p) {
           exch(lt, i)
-          exch(eq, i)
+          if (eq > lt) exch(eq, i)
           lt += 1
           eq += 1
           i += 1
@@ -33,7 +33,7 @@ object Solution {
       exch(lt, i) // swap the last element to the middle
       println(nums.mkString(" "))
       partition(lo, lt - 1)
-      partition(eq, hi)
+      partition(eq max lt + 1, hi) // eq may still points to lt if there is no elements equals to p
     }
 
     partition(0, nums.size - 1)
