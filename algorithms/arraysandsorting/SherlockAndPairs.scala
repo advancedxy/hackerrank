@@ -1,13 +1,10 @@
 object Solution {
-  import scala.collection.mutable.HashMap
 
   def pairs(nums: Array[Int]): Long = {
-    val occMap = new HashMap[Int, Int]() {
-      override def default(x: Int) = 0
-    }
-
-    for (n <- nums) occMap(n) += 1
-    occMap.values.filter(_ > 1).map(x => 1L * x * (x - 1)).sum
+    val limit = nums.max
+    val counts = Array.fill(limit + 1)(0)
+    for (n <- nums) counts(n) += 1
+    counts.map(x => 1L * x * (x - 1)).sum
   }
 
   def main(args: Array[String]) {
