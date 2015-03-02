@@ -10,7 +10,6 @@ object Solution {
     }
 
     def quickSelect(lo: Int, hi: Int, kth: Int): Int = {
-      println(lo, hi, kth)
       var lt = lo; var gt = hi; var i = lo + 1
       val p = nums(lo)
       while (i <= gt) {
