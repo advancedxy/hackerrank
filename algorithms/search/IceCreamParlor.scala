@@ -2,12 +2,10 @@ object Solution {
   import scala.collection.mutable.{HashMap, Queue}
 
   def choices(flavors: Array[Int], m: Int): Seq[Int] = {
-    val indexMap = new HashMap[Int, Queue[Int]]() {
-      override def default(x: Int) = Queue[Int]()
-    }
+    val indexMap = new HashMap[Int, Queue[Int]].withDefault(x => Queue())
 
     for (i <- 0 until flavors.size)
-      indexMap(flavors(i)) = indexMap(flavors(i)) :+ i
+      indexMap(flavors(i)) = indexMap(flavors(i)) += i
 
     for {
       i <- 0 until flavors.size
