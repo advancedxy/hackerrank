@@ -27,7 +27,7 @@ object Solution {
 
   def main(args: Array[String]) {
     val n = readLine.toInt
-    var (num, den) = (BigInt(1393), BigInt(185))
+    var (num, den) = (BigInt(1393), BigInt(985))
     for (i <- 8 to n) {
       val nc = log10(num.bigInteger)
       val dc = log10(den.bigInteger)
