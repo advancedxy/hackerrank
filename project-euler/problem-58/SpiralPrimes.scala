@@ -46,7 +46,7 @@ object Solution {
       var i = 1
       while (i <= 3) {
         p += sl
-        println(p)
+        // println(p)
         if (isPrime(p, primes, primeTable)) primeCount += 1
         i += 1
       }
