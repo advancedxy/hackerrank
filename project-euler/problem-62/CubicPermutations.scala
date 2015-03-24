@@ -30,7 +30,7 @@ object Solution {
       val (count, smallest) = cache(key)
       cache(key) = (count + 1, if (smallest == 0) cube else smallest)
     }
-    cache.map(_._2).filter(_._1 == k).map(_._2)
+    cache.filter(x => x._2._1 == k).mapValues(_._2).map(_._2)
   }
 
   def main(args: Array[String]) {
