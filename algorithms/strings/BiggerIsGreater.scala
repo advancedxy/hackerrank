@@ -1,5 +1,16 @@
 object Solution {
 
+  def binSearch(arr: IndexedSeq[Char], s: Char): Int = {
+    var lo = 0; var hi = arr.size
+    while (hi > lo) {
+      val mid = lo + (hi - lo) / 2
+      if (arr(mid) > s) hi = mid
+      else if (arr(mid) < s) lo = mid + 1
+      else return mid
+    }
+    lo
+  }
+
   def nextString(s: String): Option[String] = {
     val sv = s.toVector
     var n = sv.size - 1
@@ -12,24 +23,7 @@ object Solution {
       val remain = left.slice(0, n - 1)
       val toBeInserted = left.last
       val toBeSearched = right.reverse
-      var lo = 0; var hi = toBeSearched.size
-      var mid = 0
-      // binary search the insert index
-      while (hi > lo) {
-        mid = lo + (hi - lo) / 2
-        if (toBeSearched(mid) > toBeInserted) {
-          hi = mid
-        }
-        else if (toBeSearched(mid) < toBeInserted) {
-          lo = mid + 1
-        }
-        else {
-          // we find the number, we should break from the loop and set lo to be
-          // the index that we can insert into.
-          lo = mid
-          hi = -1
-        }
-      }
+      var lo = binSearch(toBeSearched, toBeInserted)
       while (lo < toBeSearched.size && toBeSearched(lo) == toBeInserted) lo += 1
       val toBeLeader = toBeSearched(lo)
       val sorted = toBeSearched.updated(lo, toBeInserted)
