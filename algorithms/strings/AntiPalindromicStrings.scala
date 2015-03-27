@@ -1,13 +1,15 @@
 object Solution {
 
-  def nums(n: Int, m: Int): Long = n match {
-    case 1 => m
-    case 2 => m * (m - 1)
-    case x =>
-      val pre = m * (m - 1)
-      if (pre == 0) 0
+  def nums(n: Int, m: Int): Long = {
+    val p = 1e9.toInt + 7
+    if (n == 1) m
+    else if (n == 2) 1L * m * (m - 1) % p
+    else {
+      val prefix = 1L * m * (m - 1)
+      if (prefix == 0) 0L
       else
-        (pre * BigInt(m - 2).modPow(n - 2, 1e9.toInt + 7)).mod(1e9.toInt + 7).toInt
+        (prefix * BigInt(m - 2).modPow(n - 2, p) % p).toLong
+    }
   }
 
   def main(args: Array[String]) {
