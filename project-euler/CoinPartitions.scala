@@ -18,6 +18,9 @@ object Solution {
     result
   }
 
+  // see
+  // http://en.wikipedia.org/wiki/Partition_%28number_theory%29#Representations_of_partitions 
+  // and mathblog
   def partitionWays(limit: Int): Array[Int] = {
     val p = 1e9.toInt + 7
     val result = Array.fill(limit + 1)(0)
