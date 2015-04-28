@@ -34,6 +34,6 @@ object Solution {
   def main(args: Array[String]) {
     val t = readInt
     val logins = (1 to t).map(x => readLine)
-    println(solve(logins)
+    println(solve(logins))
   }
 }
