@@ -8,7 +8,7 @@ object Solution {
     var b = BigInt(5)
     while (b < limit) {
       if (a >= b) {
-        a = a - b
+        a -= b
         b += 10
       }
       else {
@@ -27,7 +27,7 @@ object Solution {
     while (!x0.equals(x1)) {
         x0 = x1
         x1 = A.divide(x0, SCALE, ROUND_HALF_UP).add(x0)
-        x1 = x1.divide(TWO, SCALE, ROUND_HALF_UP);
+        x1 = x1.divide(TWO, SCALE, ROUND_HALF_UP)
     }
     x1
   }
@@ -41,9 +41,10 @@ object Solution {
     val n = readInt
     val p = readInt
     val sum = (1 to n).filter(!isPerfectRoot(_))
-      .map(x =>
-        sqrtBigDecimal(new BigDecimal(x), p + 1).toString.take(p + 1)
-          .foldLeft(0) { (x, y) => if (y == '.') x else x + y.asDigit }).sum
+      .map(x => sqrtBigDecimal(new BigDecimal(x), p + 10).toString.take(p + 1)
+             .foldLeft(0) { (x, y) => if (y == '.') x else x + y.asDigit })
+      .sum
+
     println(sum)
   }
 }
