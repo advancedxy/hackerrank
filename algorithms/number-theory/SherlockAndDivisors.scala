@@ -1,23 +1,20 @@
 object Solution {
 
-  def numberOfDivisors(n: Int): Int = n match {
-    case x if x <= 0 => 0
-    case 1 => 1
-    case x =>
-      var i = 2
-      while (i * i <= x && x % i != 0) {
-        i += 1
+  def numberOfDivisors(n: Int): Int = {
+    var ans = 1
+    var p = 2
+    var nn = n
+    while (p <= nn) {
+      if (p * p > nn) p = nn // nn is a prime, we don't need to check further.
+      var e = 1
+      while (nn % p == 0) {
+        nn /= p
+        e += 1
       }
-      if (i * i <= x) {
-        var j = 1
-        var num = n
-        while (num % i == 0) {
-          num /= i
-          j += 1
-        }
-        j * numberOfDivisors(num)
-      }
-      else 2
+      ans *= e
+      p += 1
+    }
+    ans
   }
 
   def main(args: Array[String]) {
