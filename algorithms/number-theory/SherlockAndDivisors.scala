@@ -17,6 +17,7 @@ object Solution {
     ans
   }
 
+
   def main(args: Array[String]) {
     for (_ <- 1 to readInt) {
       val n = readInt
