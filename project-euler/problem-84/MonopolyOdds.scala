@@ -19,7 +19,7 @@ object Solution {
       case h :: t =>
         val newAcc =
           if (start <= h)
-            (start until h).map(names(_) -> h).toMap ++ acc 
+            (start until h).map(names(_) -> h).toMap ++ acc
           else{
             assert(start < names.size)
 
@@ -29,7 +29,7 @@ object Solution {
         nextHelper(newAcc, t, h)
       case Nil => acc
     }
-    
+
     val nextRSquares: Map[String, Int] = {
       val rSquaresIndex =
         squares.filter(x => x._1.startsWith("R")).map(_._2).toList.sorted
@@ -70,7 +70,7 @@ object Solution {
                  limit(newSquare - 3))
           for (index <- squareList) {
             result(index) += p
-          } 
+          }
           result(newSquare) += 6 * p
         case "CH3" =>
           val squareList =
@@ -79,9 +79,9 @@ object Solution {
                  nextRSquares(names(newSquare)), nextUSquares(names(newSquare))
                  )
           for (index <- squareList) {
-            result(index) += p 
-          } 
-          result(newSquare) +=  p * 6 
+            result(index) += p
+          }
+          result(newSquare) +=  p * 6
           result(squares("GO")) += p * p
           result(squares("JAIL")) += p * p
           result(limit(newSquare - 3)) += p * 14 * p
