@@ -1,44 +1,5 @@
 object Solution {
 
-  // n: the first n square number.
-  // m: number of cubes
-  def countingPairs(n: Int, m: Int) = {
-    val factorials =
-      ((1 to 9).foldLeft(List(1)) { (x, y) => x.head * y :: x }).reverse.toVector
-    var acc = Set[List[Set[Int]]](List.fill(m)(Set[Int]()))
-    var visted = Set[Map[Int, Int]]()
-    for (i <- 1 to n) {
-      val square = (i * i).toString
-      val digits = ("0" * (m - square.length) + square).toList.map(_.asDigit)
-      val sig = digits.groupBy(x => x).mapValues(_.size)
-      if (visted(sig)) {
-
-      } else {
-        acc = (for {
-            ds <- digits.permutations
-            seq <- acc
-               } yield ds.zip(seq).map(x => if (x._1 == 9) x._2 + 6 else x._2 + x._1).sortBy(x => (x.size, x.sum))
-        ).toSet.filter(x => x.forall(_.size <= 6))
-      }
-      visted  += sig
-    }
-
-    def combineNumber(x: Int, y: Int): Int = {
-      if(x >= y && x <= 9 && y >= 0)
-        factorials(x) / factorials(x - y) / factorials(y) 
-      else 0
-    }
-
-    def countingSize(x: Set[Int]): Long = {
-      val s = x.size
-      if (x(6))
-        2L * combineNumber(10 - s, 6 - s) - combineNumber(10 - s - 1, 6 - s - 1)
-      else 1L * combineNumber(10 - s, 6 - s)
-    }
-
-    (acc, acc.map(x => x.map(countingSize(_)).product).sum)
-  }
-
   def bruteForce(n: Int, m: Int): Int = {
     val cubes = (0 to 9)
       .combinations(6)
