@@ -1,4 +1,4 @@
-bject Solution {
+object Solution {
   import java.math.BigDecimal.ROUND_HALF_UP
   import java.math.BigDecimal
 
