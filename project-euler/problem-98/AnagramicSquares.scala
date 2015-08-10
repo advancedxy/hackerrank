@@ -18,15 +18,17 @@ object Solution {
   }
 
   def largestSquare(digits: Int): Long = {
-    val uplimits = math.pow(10, digits).toLong
-    val sqrtLimit = math.sqrt(uplimits - 1).toInt
-    val squareMap = (0L to sqrtLimit).map(x => x * x)
+    val upLimit = math.pow(10, digits).toLong
+    val sqrtUpLimit = math.sqrt(upLimit - 1).toInt
+    val downLimit = math.pow(10, digits - 1).toLong 
+    val sqrtDownLimit = math.ceil(math.sqrt(downLimit)).toInt
+    val squareMap = (sqrtDownLimit to sqrtUpLimit).map(x => 1L * x * x)
     val anagramMap = new scala.collection.mutable.HashMap[Long, (Long, Int)] {
       override def default(x: Long) = (0L, 0)
     }
-    var i = 0
-    while (i <= sqrtLimit) {
-      val square = squareMap(i)
+    var i = sqrtDownLimit
+    while (i <= sqrtUpLimit) {
+      val square = squareMap(i - sqrtDownLimit)
       val largestNumber = largestAnagram(square)
       val (largest, number) = anagramMap(largestNumber)
       anagramMap(largestNumber) = (square max largest, number + 1)
