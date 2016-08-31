@@ -71,7 +71,7 @@ object Solution {
     }
   }
 
-  def solve_with_limit(P: Int, Q: Int, D: Int): (BigInt, BigInt) = {
+  def solve_with_limit(P: Int, Q: Int, D: Long): (BigInt, BigInt) = {
     if (isSquare(1L * P * Q)) return solvePQSquareCase(P, Q, D)
     val bigP = BigInt(P)
     val bigQ = BigInt(Q)
@@ -116,7 +116,7 @@ object Solution {
                        else
                          findBlueAndTotal(pairedNumerator, pairedDenominator, nextNumerator, nextDenominator)
       }
-      if (blueAndTotal._1 > 0 && blueAndTotal._2 <= result._2) {
+      if (blueAndTotal._1 >= 0 && blueAndTotal._2 <= result._2) {
         result = blueAndTotal
       }
     }
@@ -153,9 +153,9 @@ object Solution {
     BigInt(leftStep)
   }
 
-  def solvePQSquareCase(P: Int, Q: Int, D: Int): (BigInt, BigInt) = {
-    val W = math.round(math.sqrt(1L * P * Q))
-    val product = 1L * Q * (Q - P)
+  def solvePQSquareCase(P: Int, Q: Int, D: Long): (BigInt, BigInt) = {
+    val W: Long = math.round(math.sqrt(1L * P * Q))
+    val product: Long = 1L * Q * (Q - P)
 
     var smallFactor = 1L;
     var result = (BigInt(-1), BigInt(Long.MaxValue))
@@ -172,7 +172,7 @@ object Solution {
         val y = (t + 1) / 2
         if (Q2s % (Q * 2) != 0 || W2t % (W * 2) != 0 || s % 2 == 0 || t % 2 == 0) {
 
-        } else if (y > D && y <= result._2) {
+        } else if (y > D && y < result._2) {
           result = (BigInt(x), BigInt(y))
         }
       }
@@ -187,7 +187,7 @@ object Solution {
       val Array(p, q, limit) = readLine.split(" ").map(_.toLong)
       val g = gcd(p, q)
       val (pp, pq) = (p / g, q / g)
-      val (blue, total) = solve_with_limit(pp.toInt, pq.toInt, limit.toInt)
+      val (blue, total) = solve_with_limit(pp.toInt, pq.toInt, limit)
       if (blue < 0) println("No solution") else println(s"$blue $total")
     }
   }
