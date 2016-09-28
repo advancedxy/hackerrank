@@ -1,6 +1,10 @@
 *.class
 *.log
 
+### macOS ###
+*.DS_Store
+.AppleDouble
+.LSOverride
 # sbt specific
 .cache/
 .history/
