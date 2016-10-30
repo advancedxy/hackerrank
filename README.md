@@ -1,1 +1,1 @@
-The scala solutions for hackerrank problems.
+Solutions to hackerrank problems.
