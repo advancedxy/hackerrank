@@ -41,3 +41,6 @@ cabal.sandbox.config
 *.aux
 *.hp
 .stack-work/
+
+# C/C++
+*.out
